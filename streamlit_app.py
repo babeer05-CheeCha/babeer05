@@ -250,12 +250,29 @@ if uploaded_files:
     # Show Sort Plan Table
     if all_bin_rows:
         sort_data = []
+        max_codes = 0  # To dynamically adjust Code_0, Code_1, ...
+    
         for fname, line in all_bin_rows:
             parsed = parse_sort_line_dynamic(line)
-            sort_data.append([fname] + parsed)
+            if parsed:
+                sort_data.append([fname] + parsed)
+                max_codes = max(max_codes, len(parsed) - 4)  # Exclude Bin, Result, Logic, Item
 
-        df_sort = pd.DataFrame(sort_data)
-        df_sort.columns = ['Filename', 'Bin', 'Result', 'Logic', 'Code_0', 'Code_1', 'Code_2', 'Code_3', 'Code_4', 'Item'][:df_sort.shape[1]]
+        # Build dynamic column names
+        base_cols = ['Filename', 'Bin', 'Result', 'Logic']
+        code_cols = [f"Code_{i}" for i in range(max_codes)]
+        final_cols = base_cols + code_cols + ['Item']
+
+        # Pad rows so they all have same number of columns
+        padded_rows = []
+        for row in sort_data:
+            row_core = row[:4]
+            codes = row[4:-1]
+            item = row[-1]
+            padded_codes = codes + [''] * (max_codes - len(codes))
+            padded_rows.append(row_core + padded_codes + [item])
+
+        df_sort = pd.DataFrame(padded_rows, columns=final_cols)
 
         st.subheader("📋 Aggregated Sort Plan")
         st.dataframe(df_sort, use_container_width=True)
@@ -263,3 +280,4 @@ if uploaded_files:
         # CSV export
         csv_sort = df_sort.to_csv(index=False).encode("utf-8")
         st.download_button("📥 Download Sort Plan CSV", data=csv_sort, file_name="sort_plan.csv", mime="text/csv")
+
