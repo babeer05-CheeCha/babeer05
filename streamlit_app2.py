@@ -4,11 +4,12 @@ import os
 
 # Folder where paper specs CSVs are stored
 PAPER_SPEC_FOLDER = "paper_specs"
-# File for MTM to Product mapping
-MAPPING_FILE = "mtm_product_map.csv"
+MAPPING_FILE = os.path.join(PAPER_SPEC_FOLDER, "mtm_product_map.csv")
 
-# Ensure the folders/files exist
+# Ensure the folder exists
 os.makedirs(PAPER_SPEC_FOLDER, exist_ok=True)
+
+# Create mapping file if not exists
 if not os.path.exists(MAPPING_FILE):
     pd.DataFrame(columns=["Filename", "Product"]).to_csv(MAPPING_FILE, index=False)
 
