@@ -368,12 +368,8 @@ with tabs[1]:
         st.subheader(f"Editing Spec for Product: {product_selected}")
 
         # Show the editable DataFrame
-        edited_spec = st.experimental_data_editor(
-            spec_df,
-            num_rows="dynamic",
-            use_container_width=True,
-            key="spec_editor"
-        )
+        edited_spec = st.data_editor(spec_df, num_rows="dynamic", use_container_width=True)
+
 
         if st.button("Save Paper Spec"):
             save_spec(edited_spec, product_selected)
