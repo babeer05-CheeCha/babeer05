@@ -358,14 +358,22 @@ with tabs[1]:
     if product_selected:
         spec_df = load_spec(product_selected)
 
-        # Convert booleans in Compare_Limit and Compare_Bias if they are strings
+        # Ensure boolean fields are interpreted correctly
         for col in ['Compare_Limit', 'Compare_Bias']:
             if col in spec_df.columns:
-                spec_df[col] = spec_df[col].astype(str).str.lower().map({'true': True, 'false': False}).fillna(False)
+                spec_df[col] = spec_df[col].astype(str).str.lower().map({
+                    'true': True, 'false': False
+                }).fillna(True)
 
         st.subheader(f"Editing Spec for Product: {product_selected}")
 
-        edited_spec = st.experimental_data_editor(spec_df, num_rows="dynamic", use_container_width=True)
+        # Show the editable DataFrame
+        edited_spec = st.experimental_data_editor(
+            spec_df,
+            num_rows="dynamic",
+            use_container_width=True,
+            key="spec_editor"
+        )
 
         if st.button("Save Paper Spec"):
             save_spec(edited_spec, product_selected)
