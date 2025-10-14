@@ -375,5 +375,12 @@ with tabs[1]:
             save_spec(edited_spec, product_selected)
             st.success(f"Paper Spec '{product_selected}' saved!")
 
+    st.write("📦 Mapping Preview:")
+    st.dataframe(edited_mapping)
+
+    if 'Product' not in edited_mapping.columns:
+        st.error("⚠️ 'Product' column is missing in the mapping file.")
+    elif edited_mapping['Product'].dropna().empty:
+        st.warning("⚠️ 'Product' column is empty. Add values to see the dropdown.")
 
 # End of app
