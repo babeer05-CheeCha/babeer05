@@ -345,7 +345,7 @@ with tabs[1]:
     st.subheader("MTM to Product Spec Mapping")
 
     # Show mapping table editable
-    edited_mapping = st.experimental_data_editor(mapping_df, num_rows="dynamic", use_container_width=True)
+    edited_mapping = st.data_editor(mapping_df, num_rows="dynamic", use_container_width=True)
 
     if st.button("Save Mapping"):
         save_mapping(edited_mapping, map_path)
