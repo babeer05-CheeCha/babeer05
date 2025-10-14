@@ -177,7 +177,14 @@ def load_spec(product_filename):
 def save_spec(df_spec, product_filename):
     os.makedirs('data/paper_specs', exist_ok=True)
     path = os.path.join('data/paper_specs', product_filename)
+
+    # Ensure Compare_Limit and Compare_Bias exist
+    for col in ['Compare_Limit', 'Compare_Bias']:
+        if col not in df_spec.columns:
+            df_spec[col] = True  # default
+
     df_spec.to_csv(path, index=False)
+
 
 
 # --- Streamlit App ---
