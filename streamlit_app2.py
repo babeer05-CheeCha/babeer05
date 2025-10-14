@@ -158,10 +158,20 @@ def save_mapping(df_map, file_path='data/mtm_product_map.csv'):
 def load_spec(product_filename):
     path = os.path.join('data/paper_specs', product_filename)
     if os.path.exists(path):
-        return pd.read_csv(path)
+        df = pd.read_csv(path)
+
+        # Fill missing columns
+        for col in ['Compare_Limit', 'Compare_Bias']:
+            if col not in df.columns:
+                df[col] = True  # default to True
+
+        return df
     else:
-        # Return empty with correct columns
-        return pd.DataFrame(columns=['Item', 'Limit', 'Bias', 'Compare_Limit', 'Compare_Bias'])
+        return pd.DataFrame(columns=[
+            'NO', 'ITEM', 'Min', 'Min_Unit', 'Max', 'Max_Unit',
+            'Bias1', 'Bias1_Unit', 'Bias2', 'Bias2_Unit', 'Bias3', 'Bias3_Unit',
+            'Compare_Limit', 'Compare_Bias'
+        ])
 
 
 def save_spec(df_spec, product_filename):
