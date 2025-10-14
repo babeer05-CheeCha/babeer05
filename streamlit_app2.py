@@ -382,6 +382,7 @@ with tabs[0]:
             st.download_button("📥 Download Sort Plan CSV", data=csv_sort, file_name="sort_plan.csv", mime="text/csv")
 
         # Load mapping to get product spec
+        map_path = "paper_specs/mtm_product_map.csv"
         mapping_df = load_mapping(map_path)
         mapped_row = mapping_df[mapping_df['Filename'] == filename]
 
