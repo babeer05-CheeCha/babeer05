@@ -194,7 +194,7 @@ def load_mapping(file_path='paper_specs/mtm_product_map.csv'):
         return pd.DataFrame(columns=['Filename', 'Product'])
 
 
-def save_mapping(df_map, file_path='data/mtm_product_map.csv'):
+def save_mapping(df_map, file_path='paper_specs/mtm_product_map.csv'):
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     df_map.to_csv(file_path, index=False)
 
