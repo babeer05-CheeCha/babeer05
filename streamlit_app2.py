@@ -222,7 +222,7 @@ def load_spec(product_filename):
 
 
 def save_spec(df_spec, product_filename):
-    os.makedirs('paper_specs/paper_specs', exist_ok=True)
+    os.makedirs('paper_specs', exist_ok=True)
     path = os.path.join('paper_specs', product_filename)
 
     # Ensure Compare_Limit and Compare_Bias exist
