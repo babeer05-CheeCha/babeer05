@@ -159,19 +159,22 @@ def load_spec(product_filename):
     path = os.path.join('paper_specs', product_filename)
     if os.path.exists(path):
         df = pd.read_csv(path)
-
-        # Fill missing columns
-        for col in ['Compare_Limit', 'Compare_Bias']:
+        
+        # Ensure all expected columns are present
+        required_cols = [
+            'NO', 'ITEM', 'Min', 'Min_Unit', 'Max', 'Max_Unit',
+            'Bias1', 'Bias1_Unit', 'Bias2', 'Bias2_Unit',
+            'Bias3', 'Bias3_Unit',
+            'Compare_Limit', 'Compare_Bias1', 'Compare_Bias2', 'Compare_Bias3'
+        ]
+        for col in required_cols:
             if col not in df.columns:
-                df[col] = True  # default to True
+                df[col] = ""  # or False/None as appropriate
 
         return df
     else:
-        return pd.DataFrame(columns=[
-            'NO', 'ITEM', 'Min', 'Min_Unit', 'Max', 'Max_Unit',
-            'Bias1', 'Bias1_Unit', 'Bias2', 'Bias2_Unit', 'Bias3', 'Bias3_Unit',
-            'Compare_Limit', 'Compare_Bias'
-        ])
+        # Return empty DataFrame with full structure
+        return pd.DataFrame(columns=required_cols)
 
 
 def save_spec(df_spec, product_filename):
