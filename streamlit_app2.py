@@ -339,7 +339,7 @@ with tabs[1]:
     st.title("📄 Paper Spec & Mapping Editor")
 
     # Load current mapping
-    map_path = "data/mtm_product_map.csv"
+    map_path = "paper_specs/mtm_product_map.csv"
     mapping_df = load_mapping(map_path)
 
     st.subheader("MTM to Product Spec Mapping")
