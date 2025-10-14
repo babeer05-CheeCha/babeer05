@@ -143,7 +143,7 @@ def check_sort_coverage(df, bin_rows, filename):
 
 # --- Paper Spec & Mapping management functions ---
 
-def load_mapping(file_path='data/mtm_product_map.csv'):
+def load_mapping(file_path='paper_specs/mtm_product_map.csv'):
     if os.path.exists(file_path):
         return pd.read_csv(file_path)
     else:
@@ -156,7 +156,7 @@ def save_mapping(df_map, file_path='data/mtm_product_map.csv'):
 
 
 def load_spec(product_filename):
-    path = os.path.join('data/paper_specs', product_filename)
+    path = os.path.join('paper_specs', product_filename)
     if os.path.exists(path):
         df = pd.read_csv(path)
 
@@ -176,7 +176,7 @@ def load_spec(product_filename):
 
 def save_spec(df_spec, product_filename):
     os.makedirs('data/paper_specs', exist_ok=True)
-    path = os.path.join('data/paper_specs', product_filename)
+    path = os.path.join('paper_specs', product_filename)
 
     # Ensure Compare_Limit and Compare_Bias exist
     for col in ['Compare_Limit', 'Compare_Bias']:
