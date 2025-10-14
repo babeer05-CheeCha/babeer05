@@ -5,6 +5,50 @@ import os
 
 # --- Core Functions from your existing MTM Validator ---
 
+def validate_against_spec(df_test, product_spec_df, filename):
+    errors = []
+
+    # Merge on 'NO' and 'ITEM'
+    for _, row in df_test.iterrows():
+        test_no = str(row['NO']).strip()
+        test_item = str(row['ITEM']).strip()
+
+        spec_match = product_spec_df[
+            (product_spec_df['NO'].astype(str).str.strip() == test_no) |
+            (product_spec_df['ITEM'].astype(str).str.strip().str.upper() == test_item.upper())
+        ]
+
+        if spec_match.empty:
+            errors.append(f"{filename}: Test NO {test_no} ({test_item}) not found in spec.")
+            continue
+
+        spec_row = spec_match.iloc[0]
+
+        def compare_field(field, val_test, val_spec):
+            if pd.isna(val_spec) or val_spec == "":
+                return True  # Nothing to check
+            try:
+                return float(val_test) == float(val_spec)
+            except:
+                return False
+
+        # Check Min, Max, Bias1-3
+        checks = [
+            ('Min', row['Min'], spec_row.get('Min')),
+            ('Max', row['Max'], spec_row.get('Max')),
+            ('Bias1', row['Bias1'], spec_row.get('Bias1')),
+            ('Bias2', row['Bias2'], spec_row.get('Bias2')),
+            ('Bias3', row['Bias3'], spec_row.get('Bias3')),
+        ]
+
+        for field, val_test, val_spec in checks:
+            if not compare_field(field, val_test, val_spec):
+                errors.append(
+                    f"{filename}: Test NO {test_no} ({test_item}) {field} mismatch. MTM: {val_test} ≠ Spec: {val_spec}"
+                )
+
+    return errors
+
 def parse_sort_line_dynamic(line):
     try:
         if '^' in line:
@@ -209,6 +253,7 @@ with tabs[0]:
         "check_coverage": st.sidebar.checkbox("Test code coverage in sort plan"),
         "check_bin_out": st.sidebar.checkbox("BIN OUT must be included"),
         "check_osc": st.sidebar.checkbox("OSC must be included"),
+        "check_spec_limits": st.sidebar.checkbox("Validate test limits against paper spec"),
     }
 
     required_bin = st.sidebar.text_input("PASS bin must be BIN =", "11").zfill(2) if settings["check_pass_format"] else None
@@ -335,6 +380,19 @@ with tabs[0]:
             # CSV export
             csv_sort = df_sort.to_csv(index=False).encode("utf-8")
             st.download_button("📥 Download Sort Plan CSV", data=csv_sort, file_name="sort_plan.csv", mime="text/csv")
+
+        # Load mapping to get product spec
+        mapping_df = load_mapping(map_path)
+        mapped_row = mapping_df[mapping_df['Filename'] == filename]
+
+        if settings["check_spec_limits"] and not mapped_row.empty:
+            product_file = mapped_row.iloc[0]['Product']
+            spec_df = load_spec(product_file)
+
+            limit_errors = validate_against_spec(df, spec_df, filename)
+            all_errors.extend(limit_errors)
+        elif settings["check_spec_limits"]:
+            all_errors.append(f"{filename}: No product mapping found to validate limits.")
 
 
 
