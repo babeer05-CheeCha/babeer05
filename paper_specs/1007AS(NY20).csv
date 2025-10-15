@@ -1,5 +1,5 @@
 NO,ITEM,Min,Min_Unit,Max,Max_Unit,Bias1,Bias1_Unit,Bias2,Bias2_Unit,Bias3,Bias3_Unit
-8,BVCB,75,V,250,V,10,uA,300,V,0,
+8,BVCB,95,V,250,V,10,uA,300,V,0,
 9,BVCE,40,V,,,12,mA,300,V,0,
 7,BVEB,6,V,,,10,uA,30,V,0,
 10,VFBE,,,1.4,V,50,mA,0,,0,
