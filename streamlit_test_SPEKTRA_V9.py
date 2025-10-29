@@ -1090,7 +1090,7 @@ for label, func in VALIDATION_RULES.items():
             )
 
 # === Tabs for Single vs Multiple File Validation ===
-tab1, tab2, tab3 = st.tabs(["📁 Single File Validation", "🗂️ Multiple File Validation", "⚠️ Spec Validation"])
+tab1, tab2, tab3 = st.tabs(["📁 Single File Validation", "🗂️ Multiple File Validation", "⚠️ Spec Draft"])
 
 # ------------------------------------------------------
 # TAB 1: Single File Validation
@@ -1404,7 +1404,7 @@ with tab3:
             df_tests = df_tests[[col for col in column_order if col in df_tests.columns]]
 
             # --- Show Original Test Data ---
-            st.subheader("Original Test Data (Tab3)")
+            st.subheader("Original Test Program")
             base_cols = ["Sequence", "ItemName", "Limit-L", "Limit-H", "Bias1", "Bias2", "RV"]
             tab3_original = df_tests[base_cols].copy()
             tab3_original.reset_index(drop=True, inplace=True)
@@ -1456,6 +1456,7 @@ with tab3:
             st.warning("⚠️ No valid test data found in the uploaded file.")
     else:
         st.info("Please upload a `.tst` file to view spec data.")
+
 
 
 
