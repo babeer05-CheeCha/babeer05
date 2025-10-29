@@ -1185,7 +1185,7 @@ with tab1:
                     # Build spec path from uploaded tst file
 
                     spec_filename = uploaded_file.name.replace(".tst", ".csv")
-                    spec_path = f"D:\Winpython64-3.12.4.1\PythonScript\paper-spec\{spec_filename}"                    
+                    spec_path = f"paper-spec/{spec_filename}"   
 
                     errors = func(df_tests, spec_path, df_sorts)
                 else:
@@ -1301,7 +1301,7 @@ with tab2:
                         # Build spec path from uploaded tst file
 
                         spec_filename = uploaded_file.name.replace(".tst", ".csv")
-                        spec_path = f"D:\Winpython64-3.12.4.1\PythonScript\paper-spec\{spec_filename}"                    
+                        spec_path = f"paper-spec/{spec_filename}"        
 
                         errors = func(df_tests, spec_path, df_sorts)
                     
@@ -1456,6 +1456,7 @@ with tab3:
             st.warning("⚠️ No valid test data found in the uploaded file.")
     else:
         st.info("Please upload a `.tst` file to view spec data.")
+
 
 
 
