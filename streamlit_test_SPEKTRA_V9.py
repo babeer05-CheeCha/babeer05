@@ -3,7 +3,69 @@ import pandas as pd
 import numpy as np
 import re
 
+def calc_si(txt_a, txt_b, op = "/"):
+    """
+    Calculate the result of txt_a <op> txt_b where txt_a and txt_b
+    are strings like '80u', '100m', etc.
+    Keeps the numeric result within 1–999 digits with SI prefix scaling.
+    """
 
+    import re
+
+    # Define SI prefixes
+    si_prefix = [
+        ('p', 1e-12),
+        ('n', 1e-9),
+        ('u', 1e-6),
+        ('m', 1e-3),
+        ('', 1.0),
+        ('k', 1e3),
+        ('M', 1e6),
+        ('G', 1e9)
+    ]
+    prefix_dict = dict(si_prefix)
+
+    # Helper to parse "80u" → 80 × 1e-6
+    def parse_value(s):
+        match = re.match(r"([\d.]+)\s*([pnumnkMG]?)", s.strip())
+        if not match:
+            raise ValueError(f"Invalid token: {s}")
+        num, prefix = match.groups()
+        return float(num) * prefix_dict.get(prefix, 1.0)
+
+    # Convert inputs
+    a = parse_value(txt_a)
+    b = parse_value(txt_b)
+
+    # Perform operation
+    if op == "/":
+        result_value = a / b
+    elif op == "*":
+        result_value = a * b
+    elif op == "+":
+        result_value = a + b
+    elif op == "-":
+        result_value = a - b
+    else:
+        raise ValueError(f"Unsupported operator: {op}")
+
+    # Choose prefix so number stays within 1–999
+    abs_val = abs(result_value)
+    chosen_prefix, chosen_factor = '', 1.0
+    for prefix, factor in si_prefix:
+        scaled = abs_val / factor
+        if 1 <= scaled < 1000:
+            chosen_prefix, chosen_factor = prefix, factor
+            break
+    else:
+        if abs_val < 1e-12:
+            chosen_prefix, chosen_factor = 'p', 1e-12
+        else:
+            chosen_prefix, chosen_factor = 'G', 1e9
+
+    scaled_val = result_value / chosen_factor
+    return f"{scaled_val:.3g}{chosen_prefix}"
+    
 def filter_spec_columns(df_tests):
     """
     Clean the test DataFrame to keep only the columns relevant 
@@ -913,6 +975,15 @@ def parse_test_plan_block(block):
 
     flags = get_test_flags(block)
 
+    # ✅ Special cases using calc_si
+    try:
+        if item_name in ("RDON", "HRDON", "RDON-", "HRDON-"):
+            limit = calc_si(str(limit), str(bias1), "/")
+        elif item_name in ("HFE", "HHFE"):
+            limit = calc_si(str(bias2), str(limit), "/")
+    except Exception as e:
+        print(f"Warning: calc_si failed for {item_name}: {e}")
+    
     return {
         "Sequence": sequence_num,
         "ItemName": item_name,
@@ -1456,6 +1527,7 @@ with tab3:
             st.warning("⚠️ No valid test data found in the uploaded file.")
     else:
         st.info("Please upload a `.tst` file to view spec data.")
+
 
 
 
