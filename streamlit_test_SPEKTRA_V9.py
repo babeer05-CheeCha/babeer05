@@ -3,16 +3,17 @@ import pandas as pd
 import numpy as np
 import re
 
-def calc_si(txt_a, txt_b, op = "/"):
+def calc_si(txt_a: str, txt_b: str, op: str = "/") -> str:
     """
     Calculate the result of txt_a <op> txt_b where txt_a and txt_b
     are strings like '80u', '100m', etc.
-    Keeps the numeric result within 1–999 digits with SI prefix scaling.
+    Automatically scales the result to keep it between 1 and 999,
+    with an appropriate SI prefix, formatted to 4 significant digits.
     """
 
     import re
 
-    # Define SI prefixes
+    # Define SI prefixes from smallest to largest
     si_prefix = [
         ('p', 1e-12),
         ('n', 1e-9),
@@ -25,9 +26,11 @@ def calc_si(txt_a, txt_b, op = "/"):
     ]
     prefix_dict = dict(si_prefix)
 
-    # Helper to parse "80u" → 80 × 1e-6
+    # Helper: parse '80u' → 80 × 1e-6
     def parse_value(s):
-        match = re.match(r"([\d.]+)\s*([pnumnkMG]?)", s.strip())
+        if isinstance(s, (int, float)):
+            return float(s)
+        match = re.match(r"([\d.]+)\s*([pnumkMG]?)", str(s).strip())
         if not match:
             raise ValueError(f"Invalid token: {s}")
         num, prefix = match.groups()
@@ -49,22 +52,25 @@ def calc_si(txt_a, txt_b, op = "/"):
     else:
         raise ValueError(f"Unsupported operator: {op}")
 
-    # Choose prefix so number stays within 1–999
+    # Auto-scale to 1 <= scaled < 1000
     abs_val = abs(result_value)
     chosen_prefix, chosen_factor = '', 1.0
     for prefix, factor in si_prefix:
         scaled = abs_val / factor
-        if 1 <= scaled < 1000:
+        if 1 <= scaled < 1000:  # ✅ max 3 integer digits
             chosen_prefix, chosen_factor = prefix, factor
             break
     else:
+        # If very small, use smallest prefix; if huge, use largest
         if abs_val < 1e-12:
             chosen_prefix, chosen_factor = 'p', 1e-12
         else:
             chosen_prefix, chosen_factor = 'G', 1e9
 
     scaled_val = result_value / chosen_factor
-    return f"{scaled_val:.3g}{chosen_prefix}"
+
+    # Format with 4 significant digits
+    return f"{scaled_val:.4g}{chosen_prefix}"
     
 def filter_spec_columns(df_tests):
     """
@@ -1527,6 +1533,7 @@ with tab3:
             st.warning("⚠️ No valid test data found in the uploaded file.")
     else:
         st.info("Please upload a `.tst` file to view spec data.")
+
 
 
 
