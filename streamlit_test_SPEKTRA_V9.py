@@ -1071,6 +1071,7 @@ def parse_tst_data(data):
     num_sort_plans = data[10]
     test_plan_start = 36
     test_block_size = 18
+    sort_block_size = data[11]
     test_plans = []
 
     for i in range(num_test_plans):
@@ -1087,7 +1088,8 @@ def parse_tst_data(data):
 
     offset = sort_plan_start
     for i in range(num_sort_plans):
-        block_size = 20 + (num_test_plans * 2)
+        #block_size = 20 + (num_test_plans * 2)
+        block_size = 20 + (sort_block_size * 2)
         block = data[offset:offset + block_size]
         if len(block) < block_size:
             st.warning(f"Incomplete sort block data at index {i}")
@@ -1533,6 +1535,7 @@ with tab3:
             st.warning("⚠️ No valid test data found in the uploaded file.")
     else:
         st.info("Please upload a `.tst` file to view spec data.")
+
 
 
 
