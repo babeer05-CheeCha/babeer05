@@ -1,5 +1,5 @@
 ItemName,Limit-L,Limit-H,Bias1,Bias2,RV,SeqItemName,SeqLimit-L,SeqLimit-H,SeqBias1,SeqBias2,SeqRV
-VFBC,100m,500m,100.0u,0.0p,,6,4,6,6,6,6
+VFBC,100m,500m,100.0u,0.0p,,6,7,6,6,6,6
 VFEC,100m,500m,100.0u,0.0p,,8,9,8,8,8,8
 IEB,,50u,150.0,100.0u,,10,,10,10,10,10
 ICBO,,50u,150.0,100.0u,,11,,11,11,11,11
